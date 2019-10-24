@@ -2,7 +2,6 @@ package com.bhargavms.currencyconverter.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.core.content.edit
 import com.bhargavms.currencyconverter.api.Currencies
 import com.bhargavms.currencyconverter.api.Currency
 import com.bhargavms.currencyconverter.api.Quote
@@ -33,7 +32,7 @@ internal class CurrenciesCacheStorage(context: Context) {
     }
 
     suspend fun writeLiveQuotesForCurrency(sourceCurrency: String, data: Quotes) {
-        preferences.edit(commit = true) {
+        preferences.edit {
             putString(
                 sourceCurrency, gson.toJson(
                     QuotesDataModel(
@@ -58,7 +57,7 @@ internal class CurrenciesCacheStorage(context: Context) {
         }
 
     suspend fun writeSupportedCurrencies(currencies: Currencies) {
-        preferences.edit(commit = true) {
+        preferences.edit {
             putString(
                 SUPPORTED_CURRENCIES, gson.toJson(
                     CurrenciesDataModel(
@@ -73,6 +72,10 @@ internal class CurrenciesCacheStorage(context: Context) {
     companion object {
         private const val SUPPORTED_CURRENCIES = "currencies_storage.supported"
     }
+}
+
+inline fun SharedPreferences.edit(function: SharedPreferences.Editor.() -> Unit) {
+    this.edit().apply(function).commit()
 }
 
 data class Cache<T>(val storeTime: Long, val data: T)

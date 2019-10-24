@@ -1,5 +1,6 @@
 package com.bhargavms.currencyconverter.data
 
+import android.content.Context
 import com.bhargavms.currencyconverter.api.CurrencyApiService
 import com.bhargavms.currencyconverter.api.NetworkApiModule
 import com.bhargavms.currencyconverter.domain.currency.SupportedCurrenciesRepo
@@ -19,6 +20,12 @@ class DataModule {
         return CurrencyRepository(
             currencyApiService, currenciesCacheStorage
         )
+    }
+
+    @Provides
+    @AppScope
+    internal fun provideCurrencyStorage(context: Context): CurrenciesCacheStorage {
+        return CurrenciesCacheStorage(context)
     }
 
     @Provides

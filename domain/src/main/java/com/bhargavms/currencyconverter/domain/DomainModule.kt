@@ -8,6 +8,7 @@ import com.bhargavms.currencyconverter.domain.quotes.ShowLiveQuotes
 import com.bhargavms.currencyconverter.domain.quotes.ShowLiveQuotesImpl
 import dagger.Module
 import dagger.Provides
+import kotlin.coroutines.CoroutineContext
 
 @Module
 class DomainModule {

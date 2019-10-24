@@ -6,7 +6,11 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     api 'com.google.dagger:dagger:2.25'
+    kapt 'com.google.dagger:dagger-compiler:2.25'
     kapt "com.google.dagger:dagger-android-processor:2.25"
+}
+kapt {
+    generateStubs = true
 }
 
 sourceCompatibility = "7"

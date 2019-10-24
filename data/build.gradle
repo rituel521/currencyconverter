@@ -13,8 +13,6 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -25,6 +23,9 @@ android {
     }
 
 }
+kapt {
+    generateStubs = true
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -32,15 +33,12 @@ dependencies {
     implementation(project(":api"))
     implementation(project(":scopes"))
 
-    implementation 'androidx.appcompat:appcompat:1.1.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation "androidx.core:core-ktx:1.1.0"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.code.gson:gson:2.8.6'
     kapt "com.google.dagger:dagger-android-processor:2.25"
     api 'com.google.dagger:dagger:2.25'
+    kapt 'com.google.dagger:dagger-compiler:2.25'
 }
 repositories {
     mavenCentral()

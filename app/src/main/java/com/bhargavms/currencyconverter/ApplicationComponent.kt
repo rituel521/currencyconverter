@@ -8,9 +8,11 @@ import dagger.Component
 @Component(
     modules = [
         DataModule::class,
-        DomainModule::class
+        DomainModule::class,
+        AppModule::class
     ]
 )
 @AppScope
-interface AppComponent {
+interface ApplicationComponent {
+    fun mainScreenComponent(module: MainScreenModule): MainScreenComponent
 }

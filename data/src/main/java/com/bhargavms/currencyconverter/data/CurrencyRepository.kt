@@ -4,7 +4,6 @@ import com.bhargavms.currencyconverter.api.Currencies
 import com.bhargavms.currencyconverter.api.CurrencyApiService
 import com.bhargavms.currencyconverter.api.Quotes
 import com.bhargavms.currencyconverter.domain.currency.Currency
-import com.bhargavms.currencyconverter.domain.currency.ShowSupportedCurrencies
 import com.bhargavms.currencyconverter.domain.currency.SupportedCurrenciesRepo
 import com.bhargavms.currencyconverter.domain.quotes.LiveQuotesRepo
 import com.bhargavms.currencyconverter.domain.quotes.Quote

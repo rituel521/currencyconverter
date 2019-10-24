@@ -3,6 +3,7 @@ package com.bhargavms.currencyconverter.domain.quotes
 import com.bhargavms.currencyconverter.domain.ShowUseCase
 import com.bhargavms.currencyconverter.domain.currency.Currency
 import com.bhargavms.currencyconverter.domain.currency.SupportedCurrenciesRepo
+import com.bhargavms.currencyconverter.domain.launch
 import com.bhargavms.currencyconverter.domain.onIO
 import kotlinx.coroutines.Job
 
@@ -25,8 +26,8 @@ internal class ShowLiveQuotesImpl(
     override fun invoke(
         params: ShowQuotesFor,
         outputBlock: (List<QuoteForCurrency>) -> Unit
-    ): Job =
-        onIO {
+    ): Job = launch {
+        val result = onIO {
             liveQuotesRepo.getLiveQuotesForCurrency(params.currencyId).let {
                 val supportedCurrencies: Map<String, Currency> =
                     supportedCurrenciesRepo.getSupportedCurrencies()
@@ -37,7 +38,9 @@ internal class ShowLiveQuotesImpl(
                             it.valueConverter(params.price)
                         )
                     }
-                }.let(outputBlock)
+                }
             }
         }
+        outputBlock(result)
+    }
 }
