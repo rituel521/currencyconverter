@@ -10,6 +10,9 @@ internal fun Any.launch(block: suspend CoroutineScope.() -> Unit): Job {
     return GlobalScope.launch(Dispatchers.Main) { block() }
 }
 
-operator fun <O> ShowUseCase<Unit, O>.invoke(outputBlock: (O) -> Unit): Job {
-    return invoke(Unit, outputBlock)
+operator fun <O> ShowUseCase<Unit, O>.invoke(
+    outputBlock: (O) -> Unit,
+    errorBlock: () -> Unit
+): Job {
+    return invoke(Unit, outputBlock, errorBlock)
 }

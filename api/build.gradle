@@ -10,6 +10,11 @@ dependencies {
     api 'com.google.dagger:dagger:2.25'
     kapt 'com.google.dagger:dagger-compiler:2.25'
     kapt "com.google.dagger:dagger-android-processor:2.25"
+    implementation(project(":scopes"))
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
+    implementation("com.squareup.okhttp3:okhttp:4.2.1")
+
 }
 kapt {
     generateStubs = true

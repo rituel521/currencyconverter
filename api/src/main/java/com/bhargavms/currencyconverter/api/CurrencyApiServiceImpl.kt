@@ -4,7 +4,8 @@ internal class CurrencyApiServiceImpl(
     private val currencyInternalApiImpl: CurrencyInternalApi
 ) : CurrencyApiService {
     override suspend fun liveRates(source: String): Quotes {
-        return currencyInternalApiImpl.liveRates(source).takeIf { it.success }?.let { response ->
+        // FREE PLAN DOESNT SUPPORT SOURCE SWITCHING :(
+        return currencyInternalApiImpl.liveRates().takeIf { it.success }?.let { response ->
             val quotes = response.quotes
             quotes.keySet().mapNotNull { key ->
                 try {
@@ -14,6 +15,7 @@ internal class CurrencyApiServiceImpl(
                         quotes[key].asDouble
                     )
                 } catch (ex: Exception) {
+                    ex.printStackTrace()
                     null
                 }
             }

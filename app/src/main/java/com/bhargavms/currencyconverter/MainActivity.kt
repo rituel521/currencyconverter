@@ -1,9 +1,14 @@
 package com.bhargavms.currencyconverter
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.content.res.AppCompatResources
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_ENTER
 import android.view.View
@@ -45,6 +50,10 @@ class MainActivity : AppCompatActivity(), DIActivity<MainActivity> {
     }
 
     private inner class CurrencyPriceEditorViewImpl : CurrencyPriceEditorView {
+        override fun setError() {
+            setPriceView.setError("Network Error!")
+        }
+
         override fun listen(onDoneEditing: (CharSequence) -> Unit) {
             setPriceView.setOnEditorActionListener(object: TextView.OnEditorActionListener {
                 override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
@@ -67,7 +76,11 @@ class MainActivity : AppCompatActivity(), DIActivity<MainActivity> {
 
         init {
             quotesRecyclerView.adapter = LiveQuotesRecyclerViewAdapter(dataSource)
-            quotesRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+            quotesRecyclerView.layoutManager = StaggeredGridLayoutManager(2,
+                StaggeredGridLayoutManager.VERTICAL)
+            quotesRecyclerView.addItemDecoration(MarginItemDecoration(
+                resources.getDimensionPixelOffset(R.dimen.cell_margin)
+            ))
         }
         override fun showQuotes(quotes: List<MainScreen.LiveQuoteViewModel>) {
             dataSource.quotes = quotes.toList()
@@ -104,5 +117,17 @@ class MainActivity : AppCompatActivity(), DIActivity<MainActivity> {
             return (currencySelector.selectedItem as MainScreen.CurrencyViewModel).abrevation
         }
 
+    }
+}
+
+class MarginItemDecoration(private val spaceHeight: Int) : RecyclerView.ItemDecoration() {
+    override fun getItemOffsets(outRect: Rect, view: View,
+                                parent: RecyclerView, state: RecyclerView.State) {
+        with(outRect) {
+            top = spaceHeight
+            left =  spaceHeight
+            right = spaceHeight
+            bottom = spaceHeight
+        }
     }
 }

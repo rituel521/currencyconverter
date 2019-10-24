@@ -23,6 +23,7 @@ interface CurrencyPriceEditorView {
     fun listen(
         onDoneEditing: (CharSequence) -> Unit
     )
+    fun setError()
 }
 
 class MainScreenPresenter(
@@ -52,33 +53,39 @@ class MainScreenPresenter(
     }
 
     private fun loadCurrencies() {
-        addJob(showSupportedCurrencies {
+        addJob(showSupportedCurrencies({
             ifScreenAttachedDo {
                 hideLoader()
                 showCurrencies(it.values.map {
                     MainScreen.CurrencyViewModel(it.id, it.name)
                 })
             }
-        })
+        }, {
+            ifScreenAttachedDo {
+                hideLoader()
+                showNetworkError()
+            }
+        }))
     }
 
     fun onSetNewPrice(price: CharSequence, currency: CharSequence) {
         ifScreenAttachedDo { showLoader() }
-        try {
-            showLiveQuotes(ShowQuotesFor(currency.toString(), price.toString().toDouble())) {
-                ifScreenAttachedDo {
-                    hideLoader()
-                    showLiveRatesForSupporterCurrencies(it.map {
-                        MainScreen.LiveQuoteViewModel(
-                            it.value.round(2),
-                            it.currency.name, it.currency.id
-                        )
-                    })
-                }
+        showLiveQuotes(ShowQuotesFor(currency.toString(), price.toString().toDouble()), {
+            ifScreenAttachedDo {
+                hideLoader()
+                showLiveRatesForSupporterCurrencies(it.map {
+                    MainScreen.LiveQuoteViewModel(
+                        it.value.round(2),
+                        it.currency.name, it.currency.id
+                    )
+                })
             }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
+        }, {
+            ifScreenAttachedDo {
+                hideLoader()
+                showNetworkError()
+            }
+        })
     }
 
     private fun Double.round(decimals: Int): Double {
@@ -94,6 +101,7 @@ interface MainScreen {
     fun showLiveRatesForSupporterCurrencies(liveQuoteViewModel: List<LiveQuoteViewModel>)
     fun showLoader()
     fun hideLoader()
+    fun showNetworkError()
 
     data class CurrencyViewModel(
         val abrevation: String,
@@ -130,6 +138,10 @@ class MainScreenActivityDelegate(
     private val liveQuotesView: LiveQuotesView,
     private val mainScreenPresenter: MainScreenPresenter
 ) : MainScreen, MainActivityDelegate {
+    override fun showNetworkError() {
+        currencyPricePriceEditorView.setError()
+    }
+
     override fun showLiveRatesForSupporterCurrencies(liveQuoteViewModel: List<MainScreen.LiveQuoteViewModel>) {
         liveQuotesView.showQuotes(liveQuoteViewModel)
     }

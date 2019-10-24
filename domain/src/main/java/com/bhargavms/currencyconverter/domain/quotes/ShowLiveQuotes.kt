@@ -25,22 +25,27 @@ internal class ShowLiveQuotesImpl(
 ) : ShowLiveQuotes {
     override fun invoke(
         params: ShowQuotesFor,
-        outputBlock: (List<QuoteForCurrency>) -> Unit
+        outputBlock: (List<QuoteForCurrency>) -> Unit,
+        errorBLock: () -> Unit
     ): Job = launch {
-        val result = onIO {
-            liveQuotesRepo.getLiveQuotesForCurrency(params.currencyId).let {
-                val supportedCurrencies: Map<String, Currency> =
-                    supportedCurrenciesRepo.getSupportedCurrencies()
-                it.mapNotNull {
-                    supportedCurrencies.get(it.currencyid)?.let { currency ->
-                        QuoteForCurrency(
-                            currency,
-                            it.valueConverter(params.price)
-                        )
+        try {
+            val result = onIO {
+                liveQuotesRepo.getLiveQuotesForCurrency(params.currencyId).let {
+                    val supportedCurrencies: Map<String, Currency> =
+                        supportedCurrenciesRepo.getSupportedCurrencies()
+                    it.mapNotNull {
+                        supportedCurrencies.get(it.currencyid)?.let { currency ->
+                            QuoteForCurrency(
+                                currency,
+                                it.valueConverter(params.price)
+                            )
+                        }
                     }
                 }
             }
+            outputBlock(result)
+        } catch (ex: Exception) {
+            errorBLock()
         }
-        outputBlock(result)
     }
 }
