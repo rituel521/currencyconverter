@@ -15,7 +15,6 @@ internal class CurrencyApiServiceImpl(
                         quotes[key].asDouble
                     )
                 } catch (ex: Exception) {
-                    ex.printStackTrace()
                     null
                 }
             }

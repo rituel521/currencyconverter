@@ -18,34 +18,3 @@ data class ShowQuotesFor(
     val currencyId: String,
     val price: Double
 )
-
-internal class ShowLiveQuotesImpl(
-    private val liveQuotesRepo: LiveQuotesRepo,
-    private val supportedCurrenciesRepo: SupportedCurrenciesRepo
-) : ShowLiveQuotes {
-    override fun invoke(
-        params: ShowQuotesFor,
-        outputBlock: (List<QuoteForCurrency>) -> Unit,
-        errorBLock: () -> Unit
-    ): Job = launch {
-        try {
-            val result = onIO {
-                liveQuotesRepo.getLiveQuotesForCurrency(params.currencyId).let {
-                    val supportedCurrencies: Map<String, Currency> =
-                        supportedCurrenciesRepo.getSupportedCurrencies()
-                    it.mapNotNull {
-                        supportedCurrencies.get(it.currencyid)?.let { currency ->
-                            QuoteForCurrency(
-                                currency,
-                                it.valueConverter(params.price)
-                            )
-                        }
-                    }
-                }
-            }
-            outputBlock(result)
-        } catch (ex: Exception) {
-            errorBLock()
-        }
-    }
-}

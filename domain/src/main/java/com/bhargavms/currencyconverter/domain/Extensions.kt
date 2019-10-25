@@ -1,13 +1,15 @@
 package com.bhargavms.currencyconverter.domain
 
 import kotlinx.coroutines.*
-import kotlin.coroutines.EmptyCoroutineContext
+
+var IO: CoroutineDispatcher = Dispatchers.IO
+var MAIN: CoroutineDispatcher = Dispatchers.Main
 
 internal suspend inline fun <R> Any.onIO(crossinline block: suspend CoroutineScope.() -> R): R =
-    withContext(Dispatchers.IO) { block() }
+    withContext(IO) { block() }
 
 internal fun Any.launch(block: suspend CoroutineScope.() -> Unit): Job {
-    return GlobalScope.launch(Dispatchers.Main) { block() }
+    return GlobalScope.launch(MAIN) { block() }
 }
 
 operator fun <O> ShowUseCase<Unit, O>.invoke(

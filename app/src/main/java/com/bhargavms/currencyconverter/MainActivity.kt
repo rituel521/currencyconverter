@@ -1,22 +1,15 @@
 package com.bhargavms.currencyconverter
 
-import android.graphics.Rect
 import android.os.Bundle
 import android.support.annotation.LayoutRes
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.content.res.AppCompatResources
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.KeyEvent
-import android.view.KeyEvent.KEYCODE_ENTER
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
-import java.lang.Exception
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), DIActivity<MainActivity> {
@@ -49,6 +42,13 @@ class MainActivity : AppCompatActivity(), DIActivity<MainActivity> {
         delegate.pnActivityReady()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isFinishing) {
+            delegate.destroy()
+        }
+    }
+
     private inner class CurrencyPriceEditorViewImpl : CurrencyPriceEditorView {
         override fun setError() {
             setPriceView.setError("Network Error!")
@@ -58,11 +58,7 @@ class MainActivity : AppCompatActivity(), DIActivity<MainActivity> {
             setPriceView.setOnEditorActionListener(object: TextView.OnEditorActionListener {
                 override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        try {
-                            onDoneEditing(setPriceView.text)
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
-                        }
+                        onDoneEditing(setPriceView.text)
                         return true
                     }
                     return false
@@ -117,17 +113,5 @@ class MainActivity : AppCompatActivity(), DIActivity<MainActivity> {
             return (currencySelector.selectedItem as MainScreen.CurrencyViewModel).abrevation
         }
 
-    }
-}
-
-class MarginItemDecoration(private val spaceHeight: Int) : RecyclerView.ItemDecoration() {
-    override fun getItemOffsets(outRect: Rect, view: View,
-                                parent: RecyclerView, state: RecyclerView.State) {
-        with(outRect) {
-            top = spaceHeight
-            left =  spaceHeight
-            right = spaceHeight
-            bottom = spaceHeight
-        }
     }
 }
